@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Songs Loading</title>
+</head>
+<body>
+    <h1>Test Songs Loading</h1>
+    <div id="songsList"></div>
+    
+    <script>
+        async function testSongsLoading() {
+            try {
+                console.log("Testing songs loading...");
+                
+                // Test loading songs.json
+                const response = await fetch("songs.json");
+                console.log("Response status:", response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const songList = await response.json();
+                console.log("Songs loaded:", songList);
+                
+                // Display songs in the page
+                const songsListDiv = document.getElementById("songsList");
+                songsListDiv.innerHTML = "<h2>Loaded Songs:</h2><ul>";
+                
+                songList.forEach((songPath, index) => {
+                    const songName = songPath.split("/").pop();
+                    songsListDiv.innerHTML += `<li>${index + 1}. ${songName}</li>`;
+                });
+                
+                songsListDiv.innerHTML += "</ul>";
+                
+                // Test URL construction
+                const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
+                console.log("Base URL:", baseUrl);
+                
+                const fullUrls = songList.map(songPath => baseUrl + songPath);
+                console.log("Full URLs:", fullUrls);
+                
+            } catch (error) {
+                console.error("Error testing songs loading:", error);
+                document.getElementById("songsList").innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Run the test when page loads
+        document.addEventListener("DOMContentLoaded", testSongsLoading);
+    </script>
+</body>
+</html>
