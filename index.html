@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="utility.css" />
+    <title>Spotify - Web Player: Music for everyone</title>
+</head>
+<body>
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="container flex bg-black">
+        <div class="left">
+            <div class="home bg-grey rounded m-1 p-1">
+                <div class="logo">
+                    <img width="100px"class="invert" src="logo.svg" alt="" />
+                </div>
+                <ul>
+                    <li><img class="invert" src="home.svg" alt="home" />Home</li>
+                    <li><img class="invert" src="search.svg" alt="home" />Search</li>
+                </ul>
+            </div>
+
+            <div class="library bg-grey rounded m-1 p-1">
+                <h3 style="padding-top: 15px;">Your Library</h3>
+                <div class="songList hidden">
+                    <ul>
+                        <li>song name</li>
+                    </ul>
+                </div>
+                <div class="legal-links">
+                    <div><a href="https://www.spotify.com/in-en/legal/"><span>Legal</span></a></div>
+                    <div><a href="https://www.spotify.com/in-en/safetyandprivacy/"><span>Safety &amp; Privacy Center</span></a></div>
+                    <div><a href="https://www.spotify.com/in-en/legal/privacy-policy/"><span>Privacy Policy</span></a></div>
+                    <div><a href="https://www.spotify.com/in-en/legal/cookies-policy/"><span>Cookies</span></a></div>
+                    <div><a href="https://www.spotify.com/in-en/legal/privacy-policy/#s3"><span>About Ads</span></a></div>
+                    <div><a href="https://www.spotify.com/in-en/accessibility/"><span>Accessibility</span></a></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right bg-grey rounded">
+            <div class="header">
+                <div class="nav">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 6L9 12L15 18" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 6L15 12L9 18" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div class="buttons" id="authButtons">
+                    <button onclick="window.location.href='signup.html'">Signup</button>
+                    <button onclick="window.location.href='login.html'">Login</button>
+                </div>
+                <div class="user-info hidden" id="userInfo">
+                    <span id="userName"></span>
+                    <button onclick="logout()" class="logout-btn">Logout</button>
+                </div>
+            </div>
+
+            <div class="spotify-playlists">
+                <h1>Spotify Playlists</h1>
+                <div class="cardContainer">
+                    <div class="card" data-album="0">
+                        <div class="play"></div>
+                        <img src="Playlist-Img/img1.jfif" alt="">
+                        <h2>Happy Hits!</h2>
+                        <p>Hits to boost your mood and fill you with happiness.</p>
+                    </div>
+                    <div class="card" data-album="1">
+                        <div class="play">
+                            <!-- <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="24" cy="24" r="24" fill="#28a745" />
+                                <path d="M18 14V34L34 24L18 14Z" fill="black" />
+                            </svg> -->
+                        </div>
+                        <img src="Playlist-Img/img2.jfif" alt="">
+                        <h2>Jazz Booster</h2>
+                        <p>Jazz music to relax and unwind!</p>
+                    </div>
+                    <div class="card" data-album="2">
+                        <div class="play"></div>
+                        <img src="Playlist-Img/img3.jfif" alt="">
+                        <h2>Classic Raps</h2>
+                        <p>Feel the Rap ups!</p>
+                    </div>
+                    <div class="card" data-album="3">
+                        <div class="play"></div>
+                        <img src="Playlist-Img/img4.jfif" alt="">
+                        <h2>Sleepy songs!</h2>
+                        <p>Sleepy songs to help you fall asleep!</p>
+                    </div>
+                    <div class="card" data-album="4">
+                        <div class="play"></div>
+                        <img src="Playlist-Img/img5.jfif" alt="">
+                        <h2>Old School Hits!</h2>
+                        <p>To feel the power of Nostaligia!</p>
+                    </div>
+                    <div class="card" data-album="5">
+                        <div class="play"></div>
+                        <img src="Playlist-Img/img1.jfif" alt="">
+                        <h2>RRRRRR</h2>
+                        <p>Anthems!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="playbar hidden">
+                <div class="seekbar">
+                    <div class="circle"></div>
+                </div>
+                <div class="songinfo">Now Playing: None</div>
+                <div class="time-volume-row" style="display: flex; align-items: center; gap: 8px; justify-content: flex-end; margin-top: 8px;">
+                    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1" style="width: 100px; vertical-align: middle;" />
+                    <div class="songtime">00:00</div>
+                </div>
+                <div class="songbuttons">
+                    <img id="prevsong" src="prevsong.svg" alt="Previous">
+                    <img id="play" src="play.svg" alt="Play/Pause">
+                    <img id="nextsong" src="next.svg" alt="Next">
+                </div>
+            </div>
+
+            <audio id="audio" src=""></audio> 
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Authentication check
+        function checkAuth() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const authButtons = document.getElementById('authButtons');
+            const userInfo = document.getElementById('userInfo');
+            const userName = document.getElementById('userName');
+            
+            if (currentUser) {
+                authButtons.classList.add('hidden');
+                userInfo.classList.remove('hidden');
+                userName.textContent = `Welcome, ${currentUser.firstName}!`;
+            } else {
+                authButtons.classList.remove('hidden');
+                userInfo.classList.add('hidden');
+                // Redirect to login if not authenticated
+                window.location.href = 'login.html';
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('rememberMe');
+            window.location.href = 'login.html';
+        }
+        
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
+        
+        let audio = document.getElementById("audio");
+        let songs = [];
+        let currentSongIndex = 0;
+        let albums = [[], [], [], [], [], []]; // 6 albums
+        let selectedAlbum = null;
+
+        async function getSongs() {
+            try {
+                // Load songs from the songs.json file instead of local server
+                const response = await fetch("songs.json");
+                const songList = await response.json();
+                
+                // Convert relative paths to absolute URLs that work on any hosting platform
+                const songs = songList.map(songPath => {
+                    // Create a full URL based on the current page location
+                    const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
+                    return baseUrl + songPath;
+                });
+                
+                return songs;
+            } catch (err) {
+                console.error("Failed to load songs:", err);
+                return [];
+            }
+        }
+
+        function showAlbumSongs(albumIndex) {
+            const songUL = document.querySelector(".songList ul");
+            songUL.innerHTML = "";
+            const songListDiv = document.querySelector(".songList");
+            songListDiv.classList.remove("hidden");
+            selectedAlbum = albumIndex;
+            
+            albums[albumIndex].forEach((song, index) => {
+                const li = document.createElement("li");
+                li.textContent = decodeURIComponent(song.split("/").pop());
+                li.addEventListener("click", () => {
+                    // Show playbar when a song is selected
+                    document.querySelector('.playbar').classList.remove('hidden');
+                    // Remove 'playing' from all songs
+                    document.querySelectorAll('.songList ul li').forEach(el => el.classList.remove('playing'));
+                    // Add 'playing' to the clicked song
+                    li.classList.add('playing');
+                    // Set play button to play icon immediately
+                    document.getElementById('play').src = 'play.svg';
+                    playSongFromAlbum(albumIndex, index);
+                });
+                songUL.appendChild(li);
+            });
+        }
+
+        function playSongFromAlbum(albumIndex, songIndex) {
+            const song = albums[albumIndex][songIndex];
+            if (song) {
+                currentSongIndex = songIndex;
+                audio.src = song;
+                audio.play();
+                updateSongInfo(song);
+                updatePlayPauseIcon();
+                updateButtonStates();
+            }
+        }
+
+        function updatePlayPauseIcon() {
+            const playBtn = document.getElementById("play");
+            playBtn.src = audio.paused ? "play.svg" : "pause.svg";
+        }
+
+        function updateButtonStates() {
+            const prevBtn = document.getElementById("prevsong");
+            const nextBtn = document.getElementById("nextsong");
+            
+            if (selectedAlbum === null) {
+                prevBtn.classList.add('disabled');
+                nextBtn.classList.add('disabled');
+                return;
+            }
+            
+            const currentAlbum = albums[selectedAlbum];
+            const currentIndex = currentSongIndex;
+            
+            // Disable/enable previous button
+            if (currentIndex <= 0) {
+                prevBtn.classList.add('disabled');
+            } else {
+                prevBtn.classList.remove('disabled');
+            }
+            
+            // Disable/enable next button
+            if (currentIndex >= currentAlbum.length - 1) {
+                nextBtn.classList.add('disabled');
+            } else {
+                nextBtn.classList.remove('disabled');
+            }
+        }
+
+        function updateSongInfo(songPath = null) {
+            const songInfo = document.querySelector(".songinfo");
+            if (songPath) {
+                const songName = decodeURIComponent(songPath.split("/").pop());
+                songInfo.textContent = `Now Playing: ${songName}`;
+            } else {
+                songInfo.textContent = "Now Playing: None";
+            }
+        }
+
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+        }
+
+        function updateTimer() {
+            const currentTime = formatTime(audio.currentTime);
+            const totalTime = formatTime(audio.duration);
+            document.querySelector(".songtime").textContent = `${currentTime}/${totalTime}`;
+            const seekbar = document.querySelector(".circle");
+            if (!isNaN(audio.duration)) {
+                seekbar.style.left = `${(audio.currentTime / audio.duration) * 100}%`;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            songs = await getSongs();
+            
+            // Sort all songs alphabetically by filename
+            songs.sort((a, b) => {
+                const nameA = decodeURIComponent(a.split("/").pop().toLowerCase());
+                const nameB = decodeURIComponent(b.split("/").pop().toLowerCase());
+                if (nameA < nameB) return -1;
+                if (nameA > nameB) return 1;
+                return 0;
+            });
+
+            // Divide songs equally among 6 albums
+            const songsPerAlbum = Math.floor(songs.length / 6);
+            const remainder = songs.length % 6;
+            
+            let songIndex = 0;
+            for (let i = 0; i < 6; i++) {
+                const count = songsPerAlbum + (i < remainder ? 1 : 0);
+                albums[i] = songs.slice(songIndex, songIndex + count);
+                songIndex += count;
+            }
+
+            // Hide songList and playbar by default
+            document.querySelector(".songList").classList.add("hidden");
+            document.querySelector(".playbar").classList.add("hidden");
+
+            // Add click listeners to playlist cards
+            document.querySelectorAll('.card[data-album]').forEach(card => {
+                card.addEventListener('click', function() {
+                    const albumIndex = parseInt(card.getAttribute('data-album'));
+                    showAlbumSongs(albumIndex);
+                });
+            });
+
+            updateButtonStates();
+
+            document.getElementById("play").addEventListener("click", () => {
+                if (selectedAlbum !== null && albums[selectedAlbum].length > 0) {
+                    if (audio.paused) audio.play();
+                    else audio.pause();
+                    updatePlayPauseIcon();
+                }
+            });
+
+            document.getElementById("prevsong").addEventListener("click", () => {
+                if (selectedAlbum !== null && currentSongIndex > 0) {
+                    playSongFromAlbum(selectedAlbum, currentSongIndex - 1);
+                }
+            });
+
+            document.getElementById("nextsong").addEventListener("click", () => {
+                if (selectedAlbum !== null && currentSongIndex < albums[selectedAlbum].length - 1) {
+                    playSongFromAlbum(selectedAlbum, currentSongIndex + 1);
+                }
+            });
+
+            audio.addEventListener("timeupdate", updateTimer);
+            audio.addEventListener("play", updatePlayPauseIcon);
+            audio.addEventListener("pause", updatePlayPauseIcon);
+            audio.addEventListener("ended", () => {
+                if (selectedAlbum !== null && currentSongIndex < albums[selectedAlbum].length - 1) {
+                    playSongFromAlbum(selectedAlbum, currentSongIndex + 1);
+                }
+            });
+
+            // Add seekbar click functionality
+            const seekbar = document.querySelector(".seekbar");
+            seekbar.addEventListener("click", (e) => {
+                const rect = seekbar.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const seekbarWidth = rect.width;
+                const percent = (clickX / seekbarWidth) * 100;
+                
+                // Update circle position
+                document.querySelector(".circle").style.left = percent + "%";
+                
+                // Update audio time
+                if (!isNaN(audio.duration)) {
+                    audio.currentTime = (audio.duration * percent) / 100;
+                }
+            });
+
+            // Mobile sidebar hamburger functionality
+            const mobileOverlay = document.getElementById("mobileOverlay");
+            const leftSidebar = document.querySelector(".left");
+
+            function openSidebar() {
+                leftSidebar.classList.add("active");
+                mobileOverlay.classList.add("active");
+                document.body.style.overflow = "hidden";
+            }
+            function closeSidebar() {
+                leftSidebar.classList.remove("active");
+                mobileOverlay.classList.remove("active");
+                document.body.style.overflow = "";
+            }
+            mobileOverlay.addEventListener("click", closeSidebar);
+            window.addEventListener("resize", () => {
+                if (window.innerWidth > 768) closeSidebar();
+            });
+
+            // Touch swipe functionality for mobile sidebar
+            let touchStartX = 0;
+            let touchEndX = 0;
+            let touchStartY = 0;
+            let touchEndY = 0;
+            const swipeThreshold = 60; // Minimum px for swipe
+
+            // Open sidebar on right swipe from left edge
+            document.addEventListener('touchstart', function(e) {
+                if (window.innerWidth > 768) return;
+                if (e.touches[0].clientX < 30) {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                } else {
+                    touchStartX = null;
+                }
+            });
+            document.addEventListener('touchmove', function(e) {
+                if (window.innerWidth > 768) return;
+                if (touchStartX !== null) {
+                    touchEndX = e.touches[0].clientX;
+                    touchEndY = e.touches[0].clientY;
+                }
+            });
+            document.addEventListener('touchend', function(e) {
+                if (window.innerWidth > 768) return;
+                if (touchStartX !== null && touchEndX - touchStartX > swipeThreshold && Math.abs(touchEndY - touchStartY) < 50) {
+                    openSidebar();
+                }
+                touchStartX = null;
+                touchEndX = null;
+            });
+
+            // Close sidebar on left swipe on sidebar or overlay
+            function addSidebarSwipeClose(el) {
+                let startX = 0, endX = 0, startY = 0, endY = 0;
+                el.addEventListener('touchstart', function(e) {
+                    if (window.innerWidth > 768) return;
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                });
+                el.addEventListener('touchmove', function(e) {
+                    if (window.innerWidth > 768) return;
+                    endX = e.touches[0].clientX;
+                    endY = e.touches[0].clientY;
+                });
+                el.addEventListener('touchend', function(e) {
+                    if (window.innerWidth > 768) return;
+                    if (startX - endX > swipeThreshold && Math.abs(endY - startY) < 50) {
+                        closeSidebar();
+                    }
+                });
+            }
+            addSidebarSwipeClose(leftSidebar);
+            addSidebarSwipeClose(mobileOverlay);
+
+            // Volume slider functionality
+            const volumeSlider = document.getElementById("volumeSlider");
+            volumeSlider.addEventListener("input", function() {
+                audio.volume = parseFloat(this.value);
+            });
+        });
+    </script>
+</body>
+</html>
