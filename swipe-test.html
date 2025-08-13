@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swipe Test - Enhanced Touch Functionality</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #121212;
+            color: white;
+            touch-action: manipulation; /* Allow normal touch interactions */
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: auto; /* Allow normal overscroll behavior */
+        }
+        
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .swipe-area {
+            background: #333;
+            padding: 40px;
+            margin: 20px 0;
+            border-radius: 10px;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .swipe-instructions {
+            background: #444;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .status {
+            background: #28a745;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .status.error {
+            background: #dc3545;
+        }
+        
+        .status.success {
+            background: #28a745;
+        }
+        
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+        }
+        
+        .test-button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎵 Enhanced Swipe Test</h1>
+        <p>Test the improved swipe functionality for your music player!</p>
+        
+        <div class="swipe-instructions">
+            <h3>📱 How to Test:</h3>
+            <ul style="text-align: left;">
+                <li><strong>Open Library:</strong> Swipe RIGHT from anywhere on the screen</li>
+                <li><strong>Close Library:</strong> Swipe LEFT on the library or overlay</li>
+                <li><strong>Prevents Chrome Exit:</strong> Enhanced touch handling prevents accidental browser gestures</li>
+            </ul>
+        </div>
+        
+        <div class="swipe-area">
+            <h2>🔄 Swipe Test Area</h2>
+            <p>Swipe RIGHT from anywhere in this area to test the enhanced functionality</p>
+            <div id="swipeStatus" class="status"></div>
+        </div>
+        
+        <div class="swipe-instructions">
+            <h3>✨ New Features:</h3>
+            <ul style="text-align: left;">
+                <li>✅ Swipe from anywhere (not just left edge)</li>
+                <li>✅ Better gesture detection and timing</li>
+                <li>✅ Prevents accidental Chrome exits</li>
+                <li>✅ Improved touch accuracy</li>
+                <li>✅ Smooth mobile experience</li>
+            </ul>
+        </div>
+        
+        <button class="test-button" onclick="testSwipeDetection()">🧪 Test Swipe Detection</button>
+        <button class="test-button" onclick="showTouchInfo()">📊 Show Touch Info</button>
+        
+        <div id="touchInfo" style="display: none; background: #444; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3>Touch Information:</h3>
+            <div id="touchData"></div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced touch detection for testing
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
+        let touchEndTime = 0;
+        
+        const swipeThreshold = 80;
+        const maxSwipeTime = 500;
+        const minSwipeDistance = 100;
+        
+        function showStatus(message, type = 'success') {
+            const status = document.getElementById('swipeStatus');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 3000);
+        }
+        
+        function testSwipeDetection() {
+            showStatus('Touch detection is active! Try swiping right from anywhere.', 'success');
+        }
+        
+        function showTouchInfo() {
+            const touchInfo = document.getElementById('touchInfo');
+            const touchData = document.getElementById('touchData');
+            
+            if (touchInfo.style.display === 'none') {
+                touchInfo.style.display = 'block';
+                touchData.innerHTML = `
+                    <p><strong>Swipe Threshold:</strong> ${swipeThreshold}px</p>
+                    <p><strong>Max Swipe Time:</strong> ${maxSwipeTime}ms</p>
+                    <p><strong>Min Swipe Distance:</strong> ${minSwipeDistance}px</p>
+                    <p><strong>Touch Action:</strong> manipulation (normal touch allowed, swipe prevention)</p>
+                    <p><strong>Overscroll Behavior:</strong> auto (normal overscroll allowed)</p>
+                `;
+            } else {
+                touchInfo.style.display = 'none';
+            }
+        }
+        
+        // Enhanced touch event handling - less aggressive
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchStartTime = Date.now();
+            
+            console.log('Touch Start:', { x: touchStartX, y: touchStartY, time: touchStartTime });
+        });
+        
+        document.addEventListener('touchmove', function(e) {
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
+            const deltaX = Math.abs(currentX - touchStartX);
+            const deltaY = Math.abs(currentY - touchStartY);
+            
+            // Only prevent default if this is clearly a horizontal swipe
+            if (deltaX > 30 && deltaX > deltaY * 2) {
+                e.preventDefault();
+            }
+            
+            touchEndX = currentX;
+            touchEndY = currentY;
+        }, { passive: false });
+        
+        document.addEventListener('touchend', function(e) {
+            touchEndTime = Date.now();
+            
+            const touchDuration = touchEndTime - touchStartTime;
+            const swipeDistance = touchEndX - touchStartX;
+            const verticalDistance = Math.abs(touchEndY - touchStartY);
+            
+            console.log('Touch End:', { 
+                duration: touchDuration, 
+                distance: swipeDistance, 
+                vertical: verticalDistance 
+            });
+            
+            // Check if this is a valid right swipe
+            if (swipeDistance > minSwipeDistance && 
+                verticalDistance < 100 && 
+                touchDuration < maxSwipeTime &&
+                swipeDistance > swipeThreshold) {
+                
+                showStatus(`✅ Swipe detected! Distance: ${Math.round(swipeDistance)}px, Time: ${touchDuration}ms`, 'success');
+            } else if (swipeDistance > 20) {
+                showStatus(`⚠️ Swipe too short or too slow. Distance: ${Math.round(swipeDistance)}px, Time: ${touchDuration}ms`, 'error');
+            }
+        });
+        
+        // Prevent context menu on long press
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        
+        // Show initial status
+        showStatus('🎯 Enhanced swipe test ready! Swipe right from anywhere to test.', 'success');
+    </script>
+</body>
+</html>

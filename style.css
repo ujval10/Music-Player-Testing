@@ -1107,6 +1107,27 @@ body{
     .container {
         flex-direction: column;
     }
+    
+    /* Enhanced touch experience */
+    body {
+        touch-action: manipulation; /* Allow normal touch interactions */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        overscroll-behavior: auto; /* Allow normal overscroll behavior */
+    }
+    
+    /* Prevent text selection during swipes but allow normal interactions */
+    .left, .mobile-overlay {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        touch-action: manipulation; /* Allow normal touch interactions */
+    }
+    
+    /* Smooth touch interactions */
+    .left.active {
+        touch-action: manipulation;
+    }
 }
 
 .sidebar-close-btn {

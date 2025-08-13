@@ -383,59 +383,144 @@
                 if (window.innerWidth > 768) closeSidebar();
             });
 
-            // Touch swipe functionality for mobile sidebar
+            // Enhanced Touch swipe functionality for mobile sidebar
             let touchStartX = 0;
             let touchEndX = 0;
             let touchStartY = 0;
             let touchEndY = 0;
-            const swipeThreshold = 60; // Minimum px for swipe
+            let touchStartTime = 0;
+            let isTrackingSwipe = false;
+            const swipeThreshold = 80; // Increased threshold for better accuracy
+            const maxSwipeTime = 500; // Maximum time for a swipe gesture (ms)
+            const minSwipeDistance = 100; // Minimum distance for a swipe
 
-            // Open sidebar on right swipe from left edge
+            // Smart touch handling that doesn't interfere with normal interactions
             document.addEventListener('touchstart', function(e) {
                 if (window.innerWidth > 768) return;
-                if (e.touches[0].clientX < 30) {
-                    touchStartX = e.touches[0].clientX;
-                    touchStartY = e.touches[0].clientY;
-                } else {
-                    touchStartX = null;
-                }
-            });
-            document.addEventListener('touchmove', function(e) {
-                if (window.innerWidth > 768) return;
-                if (touchStartX !== null) {
-                    touchEndX = e.touches[0].clientX;
-                    touchEndY = e.touches[0].clientY;
-                }
-            });
-            document.addEventListener('touchend', function(e) {
-                if (window.innerWidth > 768) return;
-                if (touchStartX !== null && touchEndX - touchStartX > swipeThreshold && Math.abs(touchEndY - touchStartY) < 50) {
-                    openSidebar();
-                }
-                touchStartX = null;
-                touchEndX = null;
+                
+                // Only track touches that might become swipes
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                touchStartTime = Date.now();
+                isTrackingSwipe = false;
+                
+                // Don't prevent default here - let normal touch events work
             });
 
-            // Close sidebar on left swipe on sidebar or overlay
+            document.addEventListener('touchmove', function(e) {
+                if (window.innerWidth > 768) return;
+                
+                const currentX = e.touches[0].clientX;
+                const currentY = e.touches[0].clientY;
+                const deltaX = Math.abs(currentX - touchStartX);
+                const deltaY = Math.abs(currentY - touchStartY);
+                
+                // Only start tracking if this looks like a horizontal swipe
+                if (deltaX > 20 && deltaX > deltaY * 2) {
+                    isTrackingSwipe = true;
+                    // Only prevent default if we're definitely tracking a swipe
+                    e.preventDefault();
+                }
+                
+                if (isTrackingSwipe) {
+                    touchEndX = currentX;
+                    touchEndY = currentY;
+                }
+            }, { passive: false });
+
+            document.addEventListener('touchend', function(e) {
+                if (window.innerWidth > 768) return;
+                
+                if (isTrackingSwipe) {
+                    const touchEndTime = Date.now();
+                    const touchDuration = touchEndTime - touchStartTime;
+                    const swipeDistance = touchEndX - touchStartX;
+                    const verticalDistance = Math.abs(touchEndY - touchStartY);
+                    
+                    // Check if this is a valid right swipe gesture
+                    if (swipeDistance > minSwipeDistance && 
+                        verticalDistance < 100 && 
+                        touchDuration < maxSwipeTime &&
+                        swipeDistance > swipeThreshold) {
+                        
+                        // Open sidebar on right swipe from anywhere
+                        openSidebar();
+                    }
+                }
+                
+                // Reset touch variables
+                touchStartX = 0;
+                touchEndX = 0;
+                touchStartY = 0;
+                touchEndY = 0;
+                touchStartTime = 0;
+                isTrackingSwipe = false;
+            });
+
+            // Enhanced close sidebar functionality with selective touch handling
             function addSidebarSwipeClose(el) {
-                let startX = 0, endX = 0, startY = 0, endY = 0;
+                let startX = 0, endX = 0, startY = 0, endY = 0, startTime = 0;
+                let isTrackingCloseSwipe = false;
+                
                 el.addEventListener('touchstart', function(e) {
                     if (window.innerWidth > 768) return;
+                    
                     startX = e.touches[0].clientX;
                     startY = e.touches[0].clientY;
+                    startTime = Date.now();
+                    isTrackingCloseSwipe = false;
                 });
+                
                 el.addEventListener('touchmove', function(e) {
                     if (window.innerWidth > 768) return;
-                    endX = e.touches[0].clientX;
-                    endY = e.touches[0].clientY;
-                });
+                    
+                    const currentX = e.touches[0].clientX;
+                    const currentY = e.touches[0].clientY;
+                    const deltaX = Math.abs(currentX - startX);
+                    const deltaY = Math.abs(currentY - startY);
+                    
+                    // Only track if this looks like a horizontal swipe
+                    if (deltaX > 20 && deltaX > deltaY * 2) {
+                        isTrackingCloseSwipe = true;
+                        // Only prevent default if we're definitely tracking a swipe
+                        e.preventDefault();
+                    }
+                    
+                    if (isTrackingCloseSwipe) {
+                        endX = currentX;
+                        endY = currentY;
+                    }
+                }, { passive: false });
+                
                 el.addEventListener('touchend', function(e) {
                     if (window.innerWidth > 768) return;
-                    if (startX - endX > swipeThreshold && Math.abs(endY - startY) < 50) {
-                        closeSidebar();
+                    
+                    if (isTrackingCloseSwipe) {
+                        const touchDuration = Date.now() - startTime;
+                        const swipeDistance = startX - endX;
+                        const verticalDistance = Math.abs(endY - startY);
+                        
+                        // Check if this is a valid left swipe gesture to close
+                        if (swipeDistance > minSwipeDistance && 
+                            verticalDistance < 100 && 
+                            touchDuration < maxSwipeTime &&
+                            swipeDistance > swipeThreshold) {
+                            
+                            closeSidebar();
+                        }
                     }
+                    
+                    // Reset variables
+                    startX = 0;
+                    endX = 0;
+                    startY = 0;
+                    endY = 0;
+                    startTime = 0;
+                    isTrackingCloseSwipe = false;
                 });
             }
+
+            // Initialize the sidebar swipe close functionality
             addSidebarSwipeClose(leftSidebar);
             addSidebarSwipeClose(mobileOverlay);
 
